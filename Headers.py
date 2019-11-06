@@ -1,10 +1,11 @@
 class EthernetHeader():
-    def __init__(self):
-        self.destination_MAC_address
-        self.source_MAC_address
-        self.length
+    def __init__(self, dest_mac, source_mac, proto):
+        self.destination_MAC_address = dest_mac
+        self.source_MAC_address = source_mac
+        self.protocol = proto
+        #self.length
 
-        self.checksum
+        #self.checksum = checksum
 
 class IPHeaders():
     def __init__(self):
@@ -49,7 +50,7 @@ class ICMPHeader():
         self.type 
         self.code 
         self.checksum
-        
+
         
 #class NetworkHeaders(PacketHeaders):
 

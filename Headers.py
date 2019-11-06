@@ -1,3 +1,11 @@
+class EthernetHeader():
+    def __init__(self):
+        self.destination_MAC_address
+        self.source_MAC_address
+        self.length
+
+        self.checksum
+
 class IPHeaders():
     def __init__(self):
         self.version
@@ -35,6 +43,13 @@ class UDPHeader():
         self.destination_port
         self.length 
         self.checksum
+
+class ICMPHeader():
+    def __init__():
+        self.type 
+        self.code 
+        self.checksum
+        
         
 #class NetworkHeaders(PacketHeaders):
 

@@ -1,4 +1,6 @@
-import socket, sys
+#!/usr/bin/env python3
+
+import socket, sys, argparse
 from PacketParser import PacketParser
 
 class Sniffer():
@@ -24,13 +26,20 @@ class Sniffer():
         return self.sock.recvfrom(self.packet_size)[0]
 
 
-def main():
+def debug():
     sniffer = Sniffer()
     while True:
         pack = sniffer._recieve_raw()
         h, d = sniffer.parser.parse_Ethernet(pack)
-        print(h.source_MAC_address.string(), h.destination_MAC_address.string(), h.protocol.string)
+        print(h.destination_MAC_address.string(), h.source_MAC_address.string(),  h.protocol.string)
         
+def main():
+    sniffer = Sniffer()
+    while True:
+        sniffer.recieve_pack()
+
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="sniff your traffic <3")
+    args = parser.parse_args()
+    debug()

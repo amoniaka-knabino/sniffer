@@ -1,8 +1,10 @@
+from helpers import *
+
 class EthernetHeader():
     def __init__(self, dest_mac, source_mac, proto):
-        self.destination_MAC_address = dest_mac
-        self.source_MAC_address = source_mac
-        self.protocol = proto
+        self.destination_MAC_address = MAC_address(dest_mac)
+        self.source_MAC_address = MAC_address(source_mac)
+        self.protocol = EtherType(proto)
         #self.length
 
         #self.checksum = checksum

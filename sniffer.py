@@ -39,12 +39,12 @@ def main():
 
     console_print_mode()
 
+
 def console_print_mode():
     sniffer = Sniffer()
     while True:
         packet = sniffer.recieve_pack()
         print(packet.string_repr() + '\n\n\n')
-    
 
 
 if __name__ == "__main__":

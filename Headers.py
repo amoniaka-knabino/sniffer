@@ -23,7 +23,7 @@ class IPv4Header():
         self.type_of_service = service_type
         self.total_length = int(total_len)
         self.identifier = pack_id
-        self.flags = int(flags)
+        self.flags = FragmentationFlag(flags)
         self.fragmented_offset = int(fr_offset)
         self.ttl = int(ttl)
         self.protocol_type = TransportProtocol(proto_type)
@@ -34,7 +34,7 @@ class IPv4Header():
     
     def string_repr(self):
         args = [self.version, self.header_length, self.type_of_service, self.total_length,
-        self.identifier, self.flags, self.fragmented_offset, self.ttl, self.protocol_type.to_string(), self.header_checksum,
+        self.identifier, self.flags.to_string(), self.fragmented_offset, self.ttl, self.protocol_type.to_string(), self.header_checksum,
         self.source_address.to_string(), self.destination_address.string, self.options_with_pad]
 
         str_template = """IP ver = {} , header length = {} , TOS = {} , total length = {}

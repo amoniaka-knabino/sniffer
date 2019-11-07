@@ -25,7 +25,6 @@ class Sniffer():
     def _recieve_raw(self):
         return self.sock.recvfrom(self.packet_size)[0]
 
-
 def debug():
     sniffer = Sniffer()
     while True:
@@ -35,12 +34,19 @@ def debug():
         sniffer.parser.parse(pack)
         
 def main():
+    parser = argparse.ArgumentParser(description="sniff your traffic <3")
+    args = parser.parse_args()
+
+    console_print_mode()
+
+def console_print_mode():
     sniffer = Sniffer()
     while True:
-        sniffer.recieve_pack()
+        packet = sniffer.recieve_pack()
+        print(packet.string_repr() + '\n\n\n')
+    
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="sniff your traffic <3")
-    args = parser.parse_args()
-    debug()
+    main()
+    

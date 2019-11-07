@@ -10,11 +10,14 @@ class PacketParser():
         pass
 
     def parse(self, raw_data):
-        #packet = Packet.Packet()
         eth_headers, eth_data = self.parse_Ethernet(raw_data)
-
-        if eth_headers.etherType.int == 8:
-            self.parse_IPv4(eth_data)
+        network_header, network_data = self.parse_network_level(eth_data, eth_headers.etherType.int)
+        packet = Packet(eth_headers, eth_headers.etherType, network_header, network_header.protocol_type, None, network_data)
+        return packet
+    
+    def parse_network_level(self, eth_data, eth_type_int):
+        if eth_type_int == 8:
+            return self.parse_IPv4(eth_data)
     
     def parse_Ethernet(self, raw_data):
         eth_length = 14
@@ -24,10 +27,8 @@ class PacketParser():
 
         eth_header = raw_data[:eth_length]
         proto = eth_header[-2:]
-        #crc = ...
 
         headers = EthernetHeader(destination_mac, source_mac, proto)
-        print(headers.string_repr())
         return headers, raw_data[eth_length:]
     
     def parse_IPv4(self, eth_data):
@@ -67,9 +68,9 @@ class PacketParser():
             print('parsing ip header error')
             pass
  
-        headers = IPv4Header(version, iph_length, type_of_service, total_len, datagram_id, flags, fr_offset, ttl, protocol, h_checksum, s_addr, d_addr, opt)
-        print(headers.string_repr())
-        print('\n')
+        header = IPv4Header(version, iph_length, type_of_service, total_len, datagram_id, flags, fr_offset, ttl, protocol, h_checksum, s_addr, d_addr, opt)
+
+        return header, eth_data[header.header_length:]
 
     def parse_tcp(self, raw_data):
         pass

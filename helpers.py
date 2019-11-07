@@ -12,8 +12,8 @@ class MAC_address():
         return b
 
 class EtherType():
-    #доработать
-    int_to_name = { 8 : "IPv4"}
+    int_to_name = { 8 : "IPv4" , 0x0608 : "ARP", 0xDD86 : "IPv6",
+    0x4788 : "MPLS unicast", 0x4888 : "MPLS multicast", 0x8E88 : "EAPoL" }
 
     def _extract_int(self, type_bytes):
         # мб стоит проверять byte-order
@@ -51,3 +51,14 @@ class IPAddress():
     
     def to_string(self):
         return self.string
+
+class FragmentationFlag():
+    int_to_name = {2 : "Don't fragment  ", 1: "More fragments", 3: "Fragmentation is prohibited"}
+    def __init__(self, flag_int):
+        self.int = flag_int
+        self.bin = bin(flag_int)[2:]
+        self.string = self.int_to_name[flag_int]
+    
+    def to_string(self):
+        return self.string
+

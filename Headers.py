@@ -4,27 +4,27 @@ class EthernetHeader():
     def __init__(self, dest_mac, source_mac, proto):
         self.destination_MAC_address = MAC_address(dest_mac)
         self.source_MAC_address = MAC_address(source_mac)
-        self.protocol = EtherType(proto)
+        self.etherType = EtherType(proto)
         #self.length
 
         #self.checksum = checksum
 
-class IPHeaders():
-    def __init__(self):
-        self.version
-        self.header_length
-        self.type_of_service
-        self.total_length
-        self.identifier
-        self.flags
-        self.fragmented_offset
-        self.ttl
-        self.protocol_type
-        self.header_checksum
-        self.source_address
-        self.destination_address
-        self.options
-        self.padding
+class IPv4Headers():
+    def __init__(self, ver, h_len, service_type, total_len, id, flags, fr_offset, ttl, proto_type, h_checksum, source_ip, dest_ip, opt, pad):
+        self.version = ver
+        self.header_length = h_len
+        self.type_of_service = service_type
+        self.total_length = total_len
+        self.identifier = id
+        self.flags = flags
+        self.fragmented_offset = fr_offset
+        self.ttl = ttl
+        self.protocol_type = proto_type
+        self.header_checksum = h_checksum
+        self.source_address = source_ip
+        self.destination_address = dest_ip
+        self.options = opt
+        self.padding = pad
 
 class TCPHeader():
     def __init__():

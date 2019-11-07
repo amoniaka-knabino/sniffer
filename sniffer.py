@@ -30,8 +30,9 @@ def debug():
     sniffer = Sniffer()
     while True:
         pack = sniffer._recieve_raw()
-        h, d = sniffer.parser.parse_Ethernet(pack)
-        print(h.destination_MAC_address.string(), h.source_MAC_address.string(),  h.protocol.string)
+        #h, d = sniffer.parser.parse_Ethernet(pack)
+        #print(h.destination_MAC_address.string(), h.source_MAC_address.string(),  h.etherType.string)
+        sniffer.parser.parse(pack)
         
 def main():
     sniffer = Sniffer()

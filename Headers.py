@@ -8,23 +8,57 @@ class EthernetHeader():
         #self.length
 
         #self.checksum = checksum
+    
+    def string_repr(self):
+        args = [self.source_MAC_address.to_string(), self.destination_MAC_address.to_string(), self.etherType.string]
 
-class IPv4Headers():
-    def __init__(self, ver, h_len, service_type, total_len, id, flags, fr_offset, ttl, proto_type, h_checksum, source_ip, dest_ip, opt, pad):
-        self.version = ver
-        self.header_length = h_len
+        str_template = "Source MAC = {} , Destination MAC = {} , EtherType = {}"
+
+        return str_template.format(*args)
+
+class IPv4Header():
+    def __init__(self, ver, h_len, service_type, total_len, pack_id, flags, fr_offset, ttl, proto_type, h_checksum, source_ip, dest_ip, opt_pad):
+        self.version = int(ver)
+        self.header_length = int(h_len)
         self.type_of_service = service_type
-        self.total_length = total_len
-        self.identifier = id
-        self.flags = flags
-        self.fragmented_offset = fr_offset
-        self.ttl = ttl
-        self.protocol_type = proto_type
-        self.header_checksum = h_checksum
-        self.source_address = source_ip
-        self.destination_address = dest_ip
-        self.options = opt
-        self.padding = pad
+        self.total_length = int(total_len)
+        self.identifier = pack_id
+        self.flags = int(flags)
+        self.fragmented_offset = int(fr_offset)
+        self.ttl = int(ttl)
+        self.protocol_type = TransportProtocol(proto_type)
+        self.header_checksum = int(h_checksum)
+        self.source_address = IPAddress(source_ip)
+        self.destination_address = IPAddress(dest_ip)
+        self.options_with_pad = opt_pad
+    
+    def string_repr(self):
+        args = [self.version, self.header_length, self.type_of_service, self.total_length,
+        self.identifier, self.flags, self.fragmented_offset, self.ttl, self.protocol_type.to_string(), self.header_checksum,
+        self.source_address.to_string(), self.destination_address.string, self.options_with_pad]
+
+        str_template = """IP ver = {} , header length = {} , TOS = {} , total length = {}
+id = {} , flags = {} , fragmented offset = {},
+TTL = {}, protocol = {} , checksum = {}
+source = {} , destination = {}"""
+
+        return str_template.format(*args)
+
+class ICMPHeader():
+    def __init__(self):
+        
+        self.type 
+        self.code 
+        self.checksum
+
+class ARPHeader():
+    def __init__(self):
+        pass
+
+class DHCPHeader():
+    def __init__(self):
+        pass
+
 
 class TCPHeader():
     def __init__():
@@ -45,12 +79,6 @@ class UDPHeader():
         self.source_port
         self.destination_port
         self.length 
-        self.checksum
-
-class ICMPHeader():
-    def __init__():
-        self.type 
-        self.code 
         self.checksum
 
         

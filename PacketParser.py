@@ -6,8 +6,6 @@ from helpers import *
 from Packet import Packet
 
 class PacketParser():
-    def __init__(self):
-        pass
 
     def parse(self, raw_data):
         eth_headers, eth_data = self.parse_Ethernet(raw_data)
@@ -21,7 +19,7 @@ class PacketParser():
         elif eth_type == "ARP":
             return self.parse_ARP(eth_data)
         else:
-            return "unknown", "unknown"
+            return "unknown", b""
     
     def parse_Ethernet(self, raw_data):
         eth_length = 14

@@ -9,3 +9,4 @@ class Packet():
     
     def string_repr(self):
         return self.ethernet_header.string_repr() + '\n' + self.network_header.string_repr() + '\n\n' + str(self.data)
+

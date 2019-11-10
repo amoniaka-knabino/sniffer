@@ -2,3 +2,4 @@ useful_data/
 __pycache__
 debug.py
 *.pyc
+*.pcap

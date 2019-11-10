@@ -2,6 +2,7 @@
 
 import socket, sys, argparse
 from PacketParser import PacketParser
+from PcapMaker import PcapMaker
 
 class Sniffer():
     def __init__(self):
@@ -27,15 +28,10 @@ class Sniffer():
 
 def debug():
     sniffer = Sniffer()
-    while True:
+    pcap_maker = PcapMaker()
+    for i in range(1000):
         pack = sniffer._recieve_raw()
-        #h, d = sniffer.parser.parse_Ethernet(pack)
-        #print(h.destination_MAC_address.string(), h.source_MAC_address.string(),  h.etherType.string)
-
-        eth_headers, eth_data = sniffer.parser.parse_Ethernet(pack)
-        network_header, network_data = sniffer.parser.parse_network_level(eth_data, eth_headers.etherType.int)
-        print(eth_headers)
-        print(network_header)
+        pcap_maker.write_packet(pack)
         
 def main():
     parser = argparse.ArgumentParser(description="sniff your traffic <3")
@@ -52,6 +48,14 @@ def console_print_mode():
         print(packet.string_repr() + '\n\n\n')
 
 
+def write_pcap_mode():
+    sniffer = Sniffer()
+    pcap_maker = PcapMaker()
+    while True:
+        packet = sniffer.recieve_pack()
+        pcap_maker.write_packet(packet)
+
+
 if __name__ == "__main__":
-    main()
+    debug()
     

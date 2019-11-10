@@ -36,5 +36,14 @@ class TestParserARP():
     def test_all_2(self):
         self.parser.parse(self.raw_data)
 
+class TestICMPParser():
+    raw_data = bytes.fromhex("b486558cfa769cb70d83573208004500005492a3400040018c09c0a8086757fafaf20800b03f6edb00012e37c85d00000000237c000000000000101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f3031323334353637")
+    parser = PacketParser()
 
-
+    def test_all(self):    
+        h, data = self.parser.parse_Ethernet(self.raw_data)
+        assert str(h.etherType) == "IPv4"
+        ip_header, ip_data = self.parser.parse_IPv4(data)
+        assert str(ip_header.protocol_type) == "ICMP"
+        icmp_h, data = self.parser.parse_icmp(ip_data)
+        assert str(icmp_h.type) == "Echo Request"

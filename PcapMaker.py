@@ -18,8 +18,9 @@ class PcapMaker():
     def create_pcap_file(self):
         try:
             return open(self.filename, 'wb+')
-        except:
+        except Exception:
             print("something came wrong")
+            exit()
     
     def initialize_pcap_file(self):
         self.write_global_header()

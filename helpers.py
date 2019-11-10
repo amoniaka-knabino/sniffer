@@ -6,6 +6,7 @@ class ByteIntStrData():
     """
     Neccessary: byteorder in _extract_int == byteorder in keys in int_to_name
     """
+
     def __init__(self, type_bytes):
         self.bytes = type_bytes
         self.int = self._extract_int(type_bytes)
@@ -102,7 +103,19 @@ class ARPOpCode(ByteIntStrData):
         """
         http://www.networksorcery.com/enp/protocol/arp.htm#Opcode
         """
-        return {0: "reserved", 1:"request", 2:"reply",
-                3:"request reverse", 4: "reply reverse",
-                5:"DRARP request", 6:"DRARP peply", 7:"DRARP Error",
-                8:"InARP Request", 9:"InARP Reply", 10:"ARP NAK"}
+        return {0: "reserved", 1: "request", 2: "reply",
+                3: "request reverse", 4: "reply reverse",
+                5: "DRARP request", 6: "DRARP peply", 7: "DRARP Error",
+                8: "InARP Request", 9: "InARP Reply", 10: "ARP NAK"}
+
+
+class ICMPType(ByteIntStrData):
+    def _get_int_to_name_dic(self):
+        """
+        http://www.rhyshaden.com/icmp.htm
+        """
+        return {0: "Echo Reply", 3: "Destination Unreachable",
+                4: "Source Queench", 5:"Redirect", 8: "Echo Request",
+                11: "Time Exceeded", 12:"Parameter Problem",
+                13: "Timestamp request", 14:"Timestamp Reply",
+                17:"Address mask request", 18: "Address mask response"}

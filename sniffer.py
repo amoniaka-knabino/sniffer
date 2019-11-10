@@ -26,19 +26,24 @@ class Sniffer():
     def _recieve_raw(self):
         return self.sock.recvfrom(self.packet_size)[0]
 
-def debug():
+def write_pcap_mode_without_filtration(filename):
     sniffer = Sniffer()
-    pcap_maker = PcapMaker()
-    for i in range(1000):
+    pcap_maker = PcapMaker(filename=filename)
+    while True:
         pack = sniffer._recieve_raw()
         pcap_maker.write_packet(pack)
         
 def main():
     parser = argparse.ArgumentParser(description="sniff your traffic <3")
+    parser.add_argument('-f', '--file', dest='filename', help="pcap filename to write packets. 'temp.pcap' by default")
+    parser.add_argument('-c', '--console', dest='console_mode', action='store_true', help="console print mode (without writing pcap)")
     args = parser.parse_args()
-
-    #debug()
-    console_print_mode()
+    if args.console_mode:
+        console_print_mode()
+    elif args.filename is not None:
+        write_pcap_mode_without_filtration(args.filename)
+    else:
+        write_pcap_mode_without_filtration("temp.pcap")
 
 
 def console_print_mode():
@@ -57,5 +62,5 @@ def write_pcap_mode():
 
 
 if __name__ == "__main__":
-    debug()
+    main()
     

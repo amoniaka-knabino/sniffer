@@ -8,5 +8,11 @@ class Packet():
         self.data = data
     
     def string_repr(self):
-        return self.ethernet_header.string_repr() + '\n' + self.network_header.string_repr() + '\n\n' + str(self.data)
+        s = self.ethernet_header.string_repr() + '\n'
+        if self.network_header is not None:
+            s += self.network_header.string_repr() + '\n'
+        if self.transport_header is not None:
+            s += self.transport_header.string_repr() + '\n'
+
+        return s +'\n\n' + str(self.data)
 

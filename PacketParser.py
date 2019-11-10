@@ -1,7 +1,7 @@
 #import Packet
 from struct import unpack
 import socket
-from Headers import EthernetHeader, IPv4Header, ARPHeader
+from Headers import EthernetHeader, IPv4Header, ARPHeader, ICMPHeader
 from helpers import *
 from Packet import Packet
 
@@ -10,8 +10,15 @@ class PacketParser():
     def parse(self, raw_data):
         eth_headers, eth_data = self.parse_Ethernet(raw_data)
         network_header, network_data = self.parse_network_level(eth_data, str(eth_headers.etherType))
-        packet = Packet(eth_headers, eth_headers.etherType, network_header, network_header.protocol_type, None, network_data)
+        trasport_header, transport_data = self.parse_transport_level(network_data, str(network_header.protocol_type))
+        packet = Packet(eth_headers, eth_headers.etherType, network_header, network_header.protocol_type, trasport_header, transport_data)
         return packet
+    
+    def parse_transport_level(self, ip_data, protocol_type):
+        if protocol_type == "ICMP":
+            return self.parse_icmp(ip_data)
+        else:
+            return None, ip_data
     
     def parse_network_level(self, eth_data, eth_type):
         if eth_type == "IPv4":
@@ -19,7 +26,7 @@ class PacketParser():
         elif eth_type == "ARP":
             return self.parse_ARP(eth_data)
         else:
-            return "unknown", b""
+            return None, eth_data
     
     def parse_Ethernet(self, raw_data):
         eth_length = 14
@@ -106,6 +113,11 @@ class PacketParser():
         pass
 
     def parse_icmp(self, raw_data):
-        pass
+        header = unpack("BBH", raw_data[:4])
+        icmp_type = header[0]
+        code = header[1]
+        checksum = header[2]
+        return ICMPHeader(icmp_type, code, checksum), raw_data[4:]
+
     
     

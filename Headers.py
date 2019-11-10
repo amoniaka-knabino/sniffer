@@ -57,13 +57,16 @@ source = {} , destination = {}"""
 
         return str_template.format(*args)
 
-"""
-class ICMPHeader():
-    def __init__(self):
-        self.type
-        self.code
-        self.checksum
-"""
+
+class ICMPHeader(Header):
+    """
+    https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol
+    """
+    def __init__(self, type_byte, code_byte, checksum_int):
+        self.type = ICMPType(bytes([type_byte]))
+        self.code = bytes([code_byte])
+        self.checksum = int(checksum_int)
+
 
 class ARPHeader(Header):
     def __init__(self, hw_type_bytes, proto_type_bytes, hw_addr_byte_len,

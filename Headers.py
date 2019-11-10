@@ -33,8 +33,8 @@ class IPv4Header(Header):
         self.ttl = int(ttl)
         self.protocol_type = TransportProtocol(bytes([proto_type]))
         self.header_checksum = int(h_checksum)
-        self.source_address = IPAddress(source_ip)
-        self.destination_address = IPAddress(dest_ip)
+        self.source_address = IPv4Address(source_ip)
+        self.destination_address = IPv4Address(dest_ip)
         self.options_with_pad = opt_pad
     
     def string_repr(self):
@@ -57,13 +57,36 @@ class ICMPHeader():
         self.checksum
 
 class ARPHeader(Header):
-    def __init__(self, hw_type_bytes, proto_type_bytes):
-        self.hardware_type = hw_type_bytes
-        self.proto_type
-    
+    def __init__(self, hw_type_bytes, proto_type_bytes, hw_addr_byte_len,
+                proto_addr_byte_len, operation_code, hw_addr_sender,
+                proto_addr_sender, hw_addr_target, proto_addr_target):
+        self.hardware_type = HardwareType(hw_type_bytes)
+        self.proto_type = self._set_proto_type(proto_type_bytes)
+        self.hw_addr_byte_len = hw_addr_byte_len
+        self.proto_addr_byte_len = proto_addr_byte_len
+        self.operation_code = operation_code
+        self.hw_addr_sender = self._set_hw_addr(hw_addr_sender)
+        self.proto_addr_sender = self._set_proto_addr(proto_addr_sender)
+        self.hw_addr_target = self._set_hw_addr(hw_addr_target)
+        self.proto_addr_target = self._set_proto_addr(proto_addr_target)
+
     def _set_proto_type(self, proto_type_bytes):
-        pass
-        #if self.hardware_type == 0x0001:
+        if str(self.hardware_type) == "Ethernet":
+            return EtherType(proto_type_bytes)
+        else:
+            return ProtocolType(proto_type_bytes)
+    
+    def _set_hw_addr(self, addr_bytes):
+        if str(self.hardware_type) == "Ethernet":
+            return MAC_address(addr_bytes)
+        else:
+            return addr_bytes
+    
+    def _set_proto_addr(self, proto_addr_bytes):
+        if str(self.proto_type) == "IPv4":
+                return IPv4Address(proto_addr_bytes)
+        else:
+            return proto_addr_bytes
 
 
 class DHCPHeader():

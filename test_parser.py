@@ -24,7 +24,7 @@ class TestParserARP():
         assert str(h.etherType) == "ARP"
         arp_header = self.parser.parse_ARP(data)[0]
         assert str(arp_header.hardware_type) == "Ethernet"
-        assert str(arp_header.proto_type) == "IPv4"
+        assert str(arp_header.protocol_type) == "IPv4"
         assert int(arp_header.hw_addr_byte_len) == 6
         assert int(arp_header.proto_addr_byte_len) == 4
         assert int(arp_header.operation_code) == 1
@@ -32,6 +32,9 @@ class TestParserARP():
         assert str(arp_header.proto_addr_sender) == "192.168.8.1"
         assert str(arp_header.hw_addr_target) == "00:00:00:00:00:00"
         assert str(arp_header.proto_addr_target) == "192.168.8.103"
+    
+    def test_all_2(self):
+        self.parser.parse(self.raw_data)
 
 
 

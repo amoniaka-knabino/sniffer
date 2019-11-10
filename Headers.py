@@ -4,6 +4,10 @@ class Header():
     def __str__(self):
         d = self.__dict__
         return ', '.join([str(k) + ' : ' + str(d[k]) for k in d])
+    
+    def string_repr(self):
+        d = self.__dict__
+        return ', '.join([str(k) + ' : ' + str(d[k]) for k in d])
 
 class EthernetHeader(Header):
     def __init__(self, dest_mac, source_mac, proto):
@@ -61,7 +65,7 @@ class ARPHeader(Header):
                 proto_addr_byte_len, operation_code, hw_addr_sender,
                 proto_addr_sender, hw_addr_target, proto_addr_target):
         self.hardware_type = HardwareType(hw_type_bytes)
-        self.proto_type = self._set_proto_type(proto_type_bytes)
+        self.protocol_type = self._set_proto_type(proto_type_bytes)
         self.hw_addr_byte_len = hw_addr_byte_len
         self.proto_addr_byte_len = proto_addr_byte_len
         self.operation_code = operation_code
@@ -74,7 +78,7 @@ class ARPHeader(Header):
         if str(self.hardware_type) == "Ethernet":
             return EtherType(proto_type_bytes)
         else:
-            return ProtocolType(proto_type_bytes)
+            return ByteIntStrData(proto_type_bytes)
     
     def _set_hw_addr(self, addr_bytes):
         if str(self.hardware_type) == "Ethernet":
@@ -83,7 +87,7 @@ class ARPHeader(Header):
             return addr_bytes
     
     def _set_proto_addr(self, proto_addr_bytes):
-        if str(self.proto_type) == "IPv4":
+        if str(self.protocol_type) == "IPv4":
                 return IPv4Address(proto_addr_bytes)
         else:
             return proto_addr_bytes

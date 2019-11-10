@@ -1,6 +1,11 @@
 from helpers import *
 
-class EthernetHeader():
+class Header():
+    def __str__(self):
+        d = self.__dict__
+        return ', '.join([str(k) + ' : ' + str(d[k]) for k in d])
+
+class EthernetHeader(Header):
     def __init__(self, dest_mac, source_mac, proto):
         self.destination_MAC_address = MAC_address(dest_mac)
         self.source_MAC_address = MAC_address(source_mac)
@@ -16,7 +21,7 @@ class EthernetHeader():
 
         return str_template.format(*args)
 
-class IPv4Header():
+class IPv4Header(Header):
     def __init__(self, ver, h_len, service_type, total_len, pack_id, flags, fr_offset, ttl, proto_type, h_checksum, source_ip, dest_ip, opt_pad):
         self.version = int(ver)
         self.header_length = int(h_len)
@@ -26,7 +31,7 @@ class IPv4Header():
         self.flags = FragmentationFlag(flags)
         self.fragmented_offset = int(fr_offset)
         self.ttl = int(ttl)
-        self.protocol_type = TransportProtocol(proto_type)
+        self.protocol_type = TransportProtocol(bytes([proto_type]))
         self.header_checksum = int(h_checksum)
         self.source_address = IPAddress(source_ip)
         self.destination_address = IPAddress(dest_ip)
@@ -51,9 +56,15 @@ class ICMPHeader():
         self.code 
         self.checksum
 
-class ARPHeader():
-    def __init__(self):
+class ARPHeader(Header):
+    def __init__(self, hw_type_bytes, proto_type_bytes):
+        self.hardware_type = hw_type_bytes
+        self.proto_type
+    
+    def _set_proto_type(self, proto_type_bytes):
         pass
+        #if self.hardware_type == 0x0001:
+
 
 class DHCPHeader():
     def __init__(self):

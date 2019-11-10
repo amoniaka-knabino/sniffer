@@ -31,12 +31,17 @@ def debug():
         pack = sniffer._recieve_raw()
         #h, d = sniffer.parser.parse_Ethernet(pack)
         #print(h.destination_MAC_address.string(), h.source_MAC_address.string(),  h.etherType.string)
-        sniffer.parser.parse(pack)
+
+        eth_headers, eth_data = sniffer.parser.parse_Ethernet(pack)
+        network_header, network_data = sniffer.parser.parse_network_level(eth_data, eth_headers.etherType.int)
+        print(eth_headers)
+        print(network_header)
         
 def main():
     parser = argparse.ArgumentParser(description="sniff your traffic <3")
     args = parser.parse_args()
 
+    #debug()
     console_print_mode()
 
 

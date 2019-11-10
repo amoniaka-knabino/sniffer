@@ -18,6 +18,8 @@ class PacketParser():
     def parse_network_level(self, eth_data, eth_type_int):
         if eth_type_int == 8:
             return self.parse_IPv4(eth_data)
+        else:
+            return "unknown", "unknown"
     
     def parse_Ethernet(self, raw_data):
         eth_length = 14

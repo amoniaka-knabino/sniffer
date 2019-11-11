@@ -1,7 +1,7 @@
 #import Packet
 from struct import unpack
 import socket
-from Headers import EthernetHeader, IPv4Header, ARPHeader, ICMPHeader
+from Headers import EthernetHeader, IPv4Header, ARPHeader, ICMPHeader, DHCPHeader, UDPHeader, TCPHeader
 from helpers import *
 from Packet import Packet
 
@@ -17,6 +17,10 @@ class PacketParser():
     def parse_transport_level(self, ip_data, protocol_type):
         if protocol_type == "ICMP":
             return self.parse_icmp(ip_data)
+        elif protocol_type == "UDP":
+            return self.parse_udp(ip_data)
+        elif protocol_type == "TCP":
+            return self.parse_tcp(ip_data)
         else:
             return None, ip_data
     
@@ -107,10 +111,38 @@ class PacketParser():
         return header, b""
 
     def parse_tcp(self, raw_data):
-        pass
+        """
+        https://www.techrepublic.com/article/exploring-the-anatomy-of-a-data-packet/
+        https://en.wikipedia.org/wiki/Transmission_Control_Protocol
+        """
+        s_port = raw_data[:2]
+        d_port = raw_data[2:4]
+        seq_num = raw_data[4:8]
+        ack_num = raw_data[8:12]
+        data_offset = raw_data[12] >> 4
+
+        tcph_len = data_offset // 4
+        #reserved
+        NS = raw_data[12] & 1 
+        other_flags = raw_data[13]
+        flags = bytes([NS]) + bytes([other_flags])
+
+        window_size = raw_data[14:16]
+        check_sum = raw_data[16:18]
+        urgent_pointer = raw_data[18:20]
+
+        opt = raw_data[20:tcph_len]
+
+        return TCPHeader(s_port, d_port, seq_num, ack_num, data_offset, flags, window_size, check_sum, urgent_pointer, opt), raw_data[tcph_len:] 
+
+
 
     def parse_udp(self, raw_data):
-        pass
+        s_port = raw_data[:2]
+        d_port = raw_data[2:4]
+        length = raw_data[4:6]
+        checksum = raw_data[6:8]
+        return UDPHeader(s_port, d_port, length, checksum), raw_data[8:]
 
     def parse_icmp(self, raw_data):
         header = unpack("BBH", raw_data[:4])
@@ -118,6 +150,31 @@ class PacketParser():
         code = header[1]
         checksum = header[2]
         return ICMPHeader(icmp_type, code, checksum), raw_data[4:]
+    
+    def parse_dhcp(self, raw_data):
+        op_code = raw_data[0]
+        hw_type = raw_data[1]
+        hw_len = raw_data[2]
+        hops = raw_data[3]
+
+        transaction_id = raw_data[4:8]
+        secs_elapsed = raw_data[8:10]
+        flags = raw_data[10:12]
+
+        cliendIP = raw_data[12:12+4]
+        yourIP = raw_data[16:16+4]
+        serverIP = raw_data[20:20+4]
+        gatewayIP = raw_data[24:24+4]
+        client_hw = raw_data[28:28+16]
+        server_hostname=raw_data[44:44+64]
+        boot_file = raw_data[108:108+128]
+        opts = raw_data[228:]
+
+        return DHCPHeader(op_code, hw_type, hw_len, hops, transaction_id, secs_elapsed, flags, cliendIP, yourIP, serverIP, gatewayIP, client_hw, server_hostname, boot_file, opts), None
+
+
+
+
 
     
     

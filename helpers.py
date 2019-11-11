@@ -119,3 +119,4 @@ class ICMPType(ByteIntStrData):
                 11: "Time Exceeded", 12:"Parameter Problem",
                 13: "Timestamp request", 14:"Timestamp Reply",
                 17:"Address mask request", 18: "Address mask response"}
+

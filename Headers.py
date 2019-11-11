@@ -100,38 +100,61 @@ class ARPHeader(Header):
         else:
             return proto_addr_bytes
 
-"""
 
-class DHCPHeader():
-    def __init__(self):
-        pass
+class DHCPHeader(Header):
+    """
+    https://zametkinapolyah.ru/kompyuternye-seti/9-3-struktura-format-i-naznachenie-dhcp-paketov-soobshhenij-dhcpdiscover-dhcpoffer-dhcprequest-i-dhcpack.html#932__DHCP
+    """
+    def __init__(self, op_code, hw_type, hw_len,
+                hops, transaction_id, secs_elapsed, flags,
+                clentIP, yourIP, serverIP, gatewayIP,
+                client_hw_address, server_host_name, boot_file,
+                opts):
+        self.op_code = op_code
+        self.hw_type = hw_type
+        self.hw_len = int(hw_len)
+        self.hops = hops
+        self.transaction_id = transaction_id
+        self.secs_elapsed = secs_elapsed
+        self.flags = flags
+        self.clientIP = IPv4Address(clentIP)
+        self.yourIP = IPv4Address(yourIP)
+        self.serverIP = IPv4Address(serverIP)
+        self.gatewayIP = IPv4Address(gatewayIP)
+        self.client_hw_address = client_hw_address
+        self.server_host_name = server_host_name
+        self.boot_file = boot_file
+        self.opts = opts
 
 
-class TCPHeader():
-    def __init__():
-        self.source_port
-        self.destination_port
-        self.sequence_number
-        self.acknowledgement_number
-        self.offset
-        self.reserved
-        self.flags
-        self.window
-        self.checksum
-        self.urgent_pointer
-        self.options
+
+class TCPHeader(Header):
+    def __init__(self, source_port, destination_port, sequence_number,
+                acknowledgement_number, offset, flags,
+                window, checksum, urgent_pointer, options):
+        self.source_port = unpack("!H", source_port)[0]
+        self.destination_port = unpack("!H",destination_port)[0]
+        self.sequence_number = sequence_number
+        self.acknowledgement_number = acknowledgement_number
+        self.offset = offset
+        #self.reserved = reversed
+        self.flags = flags
+        self.window = window
+        self.checksum = checksum
+        self.urgent_pointer = urgent_pointer
+        self.options = options
 
 
-class UDPHeader():
-    def __init__():
-        self.source_port
-        self.destination_port
-        self.length
-        self.checksum
+class UDPHeader(Header):
+    def __init__(self, source_port, destination_port, length, checksum):
+        self.source_port = unpack("!H", source_port)[0]
+        self.destination_port = unpack("!H",destination_port)[0]
+        self.length = unpack("!H", length)[0]
+        self.checksum = checksum
 
 
 # class NetworkHeaders(PacketHeaders):
 
 # class TransportHeaders(PacketHeaders):
 
-"""
+

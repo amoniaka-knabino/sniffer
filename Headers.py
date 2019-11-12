@@ -10,9 +10,11 @@ class Header():
         d = self.__dict__
         return ', '.join([str(k) + ' : ' + str(d[k]) for k in d])
 
+
 class NetworkHeader(Header):
     def get_parent_header_type(self):
         return EthernetHeader
+
 
 class TransportHeader(Header):
     def get_parent_header_type(self):
@@ -24,22 +26,20 @@ class EthernetHeader(Header):
         self.destination_MAC_address = MAC_address(dest_mac)
         self.source_MAC_address = MAC_address(source_mac)
         self.ether_type = EtherType(proto)
-        # self.length
-        #self.checksum = checksum
 
     def string_repr(self):
         args = [self.source_MAC_address.to_string(
         ), self.destination_MAC_address.to_string(), self.ether_type.string]
 
-        str_template = "Source MAC = {} , Destination MAC = {} , EtherType = {}"
+        str_template = "Source MAC = {}, Destination MAC = {}, EtherType = {}"
 
         return str_template.format(*args)
 
 
 class IPv4Header(NetworkHeader):
     def __init__(self, ver, h_len, service_type,
-                total_len, pack_id, flags, fr_offset, ttl,
-                proto_type, h_checksum, source_ip, dest_ip, opt_pad):
+                 total_len, pack_id, flags, fr_offset, ttl,
+                 proto_type, h_checksum, source_ip, dest_ip, opt_pad):
         self.version = int(ver)
         self.header_length = int(h_len)
         self.type_of_service = service_type
@@ -55,13 +55,16 @@ class IPv4Header(NetworkHeader):
         self.options_with_pad = opt_pad
 
     def string_repr(self):
-        args = [self.version, self.header_length, self.type_of_service, self.total_length,
-                self.identifier, self.flags.to_string(
-                ), self.fragmented_offset, self.ttl, self.protocol_type.to_string(), self.header_checksum,
-                self.source_address.to_string(), self.destination_address.string, self.options_with_pad]
+        args = [self.version, self.header_length,
+                self.type_of_service, self.total_length,
+                self.identifier, self.flags.to_string(),
+                self.fragmented_offset, self.ttl,
+                self.protocol_type.to_string(), self.header_checksum,
+                self.source_address.to_string(),
+                self.destination_address.string, self.options_with_pad]
 
-        str_template = """IP ver = {} , header length = {} , TOS = {} , total length = {}
-id = {} , flags = {} , fragmented offset = {},
+        str_template = """IP ver = {}, header length = {}, TOS = {},
+total length = {}, id = {} , flags = {} , fragmented offset = {},
 TTL = {}, protocol = {} , checksum = {}
 source = {} , destination = {}"""
 
@@ -100,6 +103,7 @@ class ARPHeader(NetworkHeader):
         else:
             return proto_addr_bytes
 
+
 class ICMPHeader(TransportHeader):
     """
     https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol
@@ -109,39 +113,6 @@ class ICMPHeader(TransportHeader):
         self.type = ICMPType(bytes([type_byte]))
         self.code = bytes([code_byte])
         self.checksum = int(checksum_int)
-    
-    def get_parent_header_type(self):
-        return IPv4Header
-
-
-class DHCPHeader(TransportHeader):
-    """
-    https://zametkinapolyah.ru/kompyuternye-seti/9-3-struktura-format-i-naznachenie-dhcp-paketov-soobshhenij-dhcpdiscover-dhcpoffer-dhcprequest-i-dhcpack.html#932__DHCP
-    """
-
-    def __init__(self, op_code, hw_type, hw_len,
-                 hops, transaction_id, secs_elapsed, flags,
-                 clentIP, yourIP, serverIP, gatewayIP,
-                 client_hw_address, server_host_name, boot_file,
-                 opts):
-        self.op_code = op_code
-        self.hw_type = hw_type
-        self.hw_len = int(hw_len)
-        self.hops = hops
-        self.transaction_id = transaction_id
-        self.secs_elapsed = secs_elapsed
-        self.flags = flags
-        self.clientIP = IPv4Address(clentIP)
-        self.yourIP = IPv4Address(yourIP)
-        self.serverIP = IPv4Address(serverIP)
-        self.gatewayIP = IPv4Address(gatewayIP)
-        self.client_hw_address = client_hw_address
-        self.server_host_name = server_host_name
-        self.boot_file = boot_file
-        self.opts = opts
-    
-    def get_parent_header_type(self):
-        return IPv4Header
 
 
 class TCPHeader(TransportHeader):
@@ -153,15 +124,12 @@ class TCPHeader(TransportHeader):
         self.sequence_number = sequence_number
         self.acknowledgement_number = acknowledgement_number
         self.offset = offset
-        #self.reserved = reversed
+
         self.flags = flags
         self.window = window
         self.checksum = checksum
         self.urgent_pointer = urgent_pointer
         self.options = options
-    
-    def get_parent_header_type(self):
-        return IPv4Header
 
 
 class UDPHeader(TransportHeader):
@@ -170,9 +138,3 @@ class UDPHeader(TransportHeader):
         self.destination_port = unpack("!H", destination_port)[0]
         self.length = unpack("!H", length)[0]
         self.checksum = checksum
-    
-    def get_parent_header_type(self):
-        return IPv4Header
-
-
-

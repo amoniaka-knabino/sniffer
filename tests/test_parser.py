@@ -1,27 +1,29 @@
 from PacketParser import PacketParser
 
+
 class TestParserTCP():
     with open('test_packets/tcp_packet', 'rb') as f:
         raw_data = f.read()
     parser = PacketParser()
 
-    def test_mac_parsing(self):    
-        header, data = self.parser.parse_Ethernet(self.raw_data)
-        assert header.destination_MAC_address.to_string() == "00:50:56:e9:04:2e"
-        assert header.source_MAC_address.to_string() == "00:0c:29:84:86:5f"
-    
+    def test_mac_parsing(self):
+        h, data = self.parser.parse_Ethernet(self.raw_data)
+        assert h.destination_MAC_address.to_string() == "00:50:56:e9:04:2e"
+        assert h.source_MAC_address.to_string() == "00:0c:29:84:86:5f"
+
     def test_ip_address_parsing(self):
         eth_header, eth_data = self.parser.parse_Ethernet(self.raw_data)
         ip_header, data = self.parser.parse_IPv4(eth_data)
         assert ip_header.source_address.to_string() == "192.168.221.128"
         assert ip_header.destination_address.to_string() == "122.249.180.9"
 
+
 class TestParserARP():
     with open('test_packets/arp_packet', 'rb') as f:
         raw_data = f.read()
     parser = PacketParser()
 
-    def test_all(self):    
+    def test_all(self):
         h, data = self.parser.parse_Ethernet(self.raw_data)
         assert str(h.ether_type) == "ARP"
         arp_header = self.parser.parse_ARP(data)[0]
@@ -34,16 +36,17 @@ class TestParserARP():
         assert str(arp_header.proto_addr_sender) == "192.168.8.1"
         assert str(arp_header.hw_addr_target) == "00:00:00:00:00:00"
         assert str(arp_header.proto_addr_target) == "192.168.8.103"
-    
+
     def test_all_2(self):
         self.parser.parse(self.raw_data)
+
 
 class TestICMPParser():
     with open('test_packets/icmp_packet', 'rb') as f:
         raw_data = f.read()
     parser = PacketParser()
 
-    def test_all(self):    
+    def test_all(self):
         h, data = self.parser.parse_Ethernet(self.raw_data)
         assert str(h.ether_type) == "IPv4"
         ip_header, ip_data = self.parser.parse_IPv4(data)
@@ -52,21 +55,12 @@ class TestICMPParser():
         assert str(icmp_h.type) == "Echo Request"
 
 
-class TestDHCPParser():
-    with open('test_packets/dhcp_packet', 'rb') as f:
-        raw_data = f.read()
-    parser = PacketParser()
-
-    def test_all(self):
-        pass
-
-
 class TestUDPParser():
     with open('test_packets/udp_packet', 'rb') as f:
         raw_data = f.read()
     parser = PacketParser()
 
-    def test_all(self):    
+    def test_all(self):
         h, data = self.parser.parse_Ethernet(self.raw_data)
         assert str(h.ether_type) == "IPv4"
         ip_header, ip_data = self.parser.parse_IPv4(data)

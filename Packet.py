@@ -6,7 +6,7 @@ class Packet():
         self.transport_protocol = trans_pr
         self.transport_header = trans_h
         self.data = data
-    
+
     def string_repr(self):
         s = self.ethernet_header.string_repr() + '\n'
         if self.network_header is not None:
@@ -14,5 +14,4 @@ class Packet():
         if self.transport_header is not None:
             s += self.transport_header.string_repr() + '\n'
 
-        return s +'\n\n' + str(self.data)
-
+        return s + '\n\n' + str(self.data)

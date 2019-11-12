@@ -39,7 +39,8 @@ class HardwareType(ByteIntStrData):
 class EtherType(ByteIntStrData):
     def _get_int_to_name_dic(self):
         int_to_name = {8: "IPv4", 0x0608: "ARP", 0xDD86: "IPv6",
-                       0x4788: "MPLS unicast", 0x4888: "MPLS multicast", 0x8E88: "EAPoL"}
+                       0x4788: "MPLS unicast", 0x4888: "MPLS multicast",
+                       0x8E88: "EAPoL"}
         return int_to_name
 
 
@@ -47,7 +48,6 @@ class TransportProtocol(ByteIntStrData):
     def _get_int_to_name_dic(self):
         int_to_name = {17: "UDP", 6: "TCP", 1: "ICMP", 88: "IGPR", 89: "OSPF"}
         return int_to_name
-
 
 
 class IPv4Address():
@@ -60,7 +60,7 @@ class IPv4Address():
 
     def __str__(self):
         return self.string
-    
+
     @classmethod
     def get_IPv4_from_str(cls, ip_str):
         return IPv4Address(socket.inet_aton(ip_str))
@@ -120,9 +120,7 @@ class ICMPType(ByteIntStrData):
         http://www.rhyshaden.com/icmp.htm
         """
         return {0: "Echo Reply", 3: "Destination Unreachable",
-                4: "Source Queench", 5:"Redirect", 8: "Echo Request",
-                11: "Time Exceeded", 12:"Parameter Problem",
-                13: "Timestamp request", 14:"Timestamp Reply",
-                17:"Address mask request", 18: "Address mask response"}
-
-
+                4: "Source Queench", 5: "Redirect", 8: "Echo Request",
+                11: "Time Exceeded", 12: "Parameter Problem",
+                13: "Timestamp request", 14: "Timestamp Reply",
+                17: "Address mask request", 18: "Address mask response"}

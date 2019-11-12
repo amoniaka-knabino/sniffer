@@ -1,19 +1,23 @@
-#import Packet
 from struct import unpack
 import socket
 from Headers import *
 from helpers import *
 from Packet import Packet
 
+
 class PacketParser():
 
     def parse(self, raw_data):
         eth_headers, eth_data = self.parse_Ethernet(raw_data)
-        network_header, network_data = self.parse_network_level(eth_data, str(eth_headers.ether_type))
-        trasport_header, transport_data = self.parse_transport_level(network_data, str(network_header.protocol_type))
-        packet = Packet(eth_headers, eth_headers.ether_type, network_header, network_header.protocol_type, trasport_header, transport_data)
+        network_header, network_data = self.parse_network_level(
+            eth_data, str(eth_headers.ether_type))
+        trasport_header, transport_data = self.parse_transport_level(
+            network_data, str(network_header.protocol_type))
+        packet = Packet(eth_headers, eth_headers.ether_type,
+                        network_header, network_header.protocol_type,
+                        trasport_header, transport_data)
         return packet
-    
+
     def parse_transport_level(self, ip_data, protocol_type):
         if protocol_type == "ICMP":
             return self.parse_icmp(ip_data)
@@ -23,7 +27,7 @@ class PacketParser():
             return self.parse_tcp(ip_data)
         else:
             return None, ip_data
-    
+
     def parse_network_level(self, eth_data, eth_type):
         if eth_type == "IPv4":
             return self.parse_IPv4(eth_data)
@@ -31,7 +35,7 @@ class PacketParser():
             return self.parse_ARP(eth_data)
         else:
             return None, eth_data
-    
+
     def parse_Ethernet(self, raw_data):
         eth_length = 14
 
@@ -43,22 +47,22 @@ class PacketParser():
 
         headers = EthernetHeader(destination_mac, source_mac, proto)
         return headers, raw_data[eth_length:]
-    
+
     def parse_IPv4(self, eth_data):
 
-        iph = unpack('!BBHHHBBH4s4s' , eth_data[0:20])
- 
+        iph = unpack('!BBHHHBBH4s4s', eth_data[0:20])
+
         version_ihl = iph[0]
         # version_ihl_byte = [ver(4 bits), ihl(4 bits)]
         version = version_ihl >> 4
         ihl = version_ihl & 0xF
- 
-        iph_length = ihl * 4 #???
+
+        iph_length = ihl * 4  # ???
 
         type_of_service = iph[1]
-        total_len = iph[2] #should I change byteorder
+        total_len = iph[2]  # should I change byteorder
         datagram_id = iph[3]
-        
+
         flags_fr_offset = iph[4]
         flags = flags_fr_offset >> 13
         fr_offset = flags_fr_offset & 0xFF
@@ -76,8 +80,10 @@ class PacketParser():
         else:
             print('parsing ip header error')
             pass
- 
-        header = IPv4Header(version, iph_length, type_of_service, total_len, datagram_id, flags, fr_offset, ttl, protocol, h_checksum, s_addr, d_addr, opt)
+
+        header = IPv4Header(version, iph_length, type_of_service,
+                            total_len, datagram_id, flags, fr_offset,
+                            ttl, protocol, h_checksum, s_addr, d_addr, opt)
 
         return header, eth_data[header.header_length:]
 
@@ -93,11 +99,6 @@ class PacketParser():
 
         opt = first_part[4]
 
-        #addrs_format_expr = "{}s{}s".format(hw_adr_size, proto_addr_size)
-
-        #hw_sender, proto_sender = unpack(addrs_format_expr, eth_data[8:8+addrs_size])
-        #hw_target, proto_target = unpack(addrs_format_expr, eth_data[8+addrs_size:8+2*addrs_size])
-
         second_part = eth_data[8:8+addrs_size]
 
         hw_sender = second_part[:hw_adr_size]
@@ -107,7 +108,9 @@ class PacketParser():
         hw_target = third_part[:hw_adr_size]
         proto_target = third_part[hw_adr_size:]
 
-        header = ARPHeader(hw_type, proto_type, hw_adr_size, proto_addr_size, opt, hw_sender, proto_sender, hw_target, proto_target)
+        header = ARPHeader(hw_type, proto_type, hw_adr_size, proto_addr_size,
+                           opt, hw_sender, proto_sender,
+                           hw_target, proto_target)
         return header, b""
 
     def parse_tcp(self, raw_data):
@@ -122,8 +125,8 @@ class PacketParser():
         data_offset = raw_data[12] >> 4
 
         tcph_len = data_offset // 4
-        #reserved
-        NS = raw_data[12] & 1 
+        # reserved
+        NS = raw_data[12] & 1
         other_flags = raw_data[13]
         flags = bytes([NS]) + bytes([other_flags])
 
@@ -133,9 +136,9 @@ class PacketParser():
 
         opt = raw_data[20:tcph_len]
 
-        return TCPHeader(s_port, d_port, seq_num, ack_num, data_offset, flags, window_size, check_sum, urgent_pointer, opt), raw_data[tcph_len:] 
-
-
+        return TCPHeader(s_port, d_port, seq_num, ack_num,
+                         data_offset, flags, window_size,
+                         check_sum, urgent_pointer, opt), raw_data[tcph_len:]
 
     def parse_udp(self, raw_data):
         s_port = raw_data[:2]
@@ -150,31 +153,3 @@ class PacketParser():
         code = header[1]
         checksum = header[2]
         return ICMPHeader(icmp_type, code, checksum), raw_data[4:]
-    
-    def parse_dhcp(self, raw_data):
-        op_code = raw_data[0]
-        hw_type = raw_data[1]
-        hw_len = raw_data[2]
-        hops = raw_data[3]
-
-        transaction_id = raw_data[4:8]
-        secs_elapsed = raw_data[8:10]
-        flags = raw_data[10:12]
-
-        cliendIP = raw_data[12:12+4]
-        yourIP = raw_data[16:16+4]
-        serverIP = raw_data[20:20+4]
-        gatewayIP = raw_data[24:24+4]
-        client_hw = raw_data[28:28+16]
-        server_hostname=raw_data[44:44+64]
-        boot_file = raw_data[108:108+128]
-        opts = raw_data[228:]
-
-        return DHCPHeader(op_code, hw_type, hw_len, hops, transaction_id, secs_elapsed, flags, cliendIP, yourIP, serverIP, gatewayIP, client_hw, server_hostname, boot_file, opts), None
-
-
-
-
-
-    
-    

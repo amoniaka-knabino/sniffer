@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-import socket, sys, argparse
+import socket, sys
 from PacketParser import PacketParser
 from PcapMaker import PcapMaker
+from argparser import ArgParser
 
 class Sniffer():
     def __init__(self):
@@ -34,16 +35,16 @@ def write_pcap_mode_without_filtration(filename):
         pcap_maker.write_packet(pack)
         
 def main():
-    parser = argparse.ArgumentParser(description="sniff your traffic <3")
-    parser.add_argument('-f', '--file', dest='filename', help="pcap filename to write packets. 'temp.pcap' by default")
-    parser.add_argument('-c', '--console', dest='console_mode', action='store_true', help="console print mode (without writing pcap)")
-    args = parser.parse_args()
+    parser = ArgParser()
+    args = parser.get_args()
     if args.console_mode:
         console_print_mode()
-    elif args.filename is not None:
-        write_pcap_mode_without_filtration(args.filename)
     else:
-        write_pcap_mode_without_filtration("temp.pcap")
+        if args.filename is not None:
+            filename = args.filename
+        else:
+            filename = "temp.pcap"
+        write_pcap_mode_without_filtration(filename)
 
 
 def console_print_mode():

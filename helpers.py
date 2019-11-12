@@ -49,6 +49,7 @@ class TransportProtocol(ByteIntStrData):
         return int_to_name
 
 
+
 class IPv4Address():
     def __init__(self, adr_bytes):
         self.bytes = adr_bytes
@@ -59,6 +60,10 @@ class IPv4Address():
 
     def __str__(self):
         return self.string
+    
+    @classmethod
+    def get_IPv4_from_str(cls, ip_str):
+        return IPv4Address(socket.inet_aton(ip_str))
 
 
 class MAC_address():
@@ -119,4 +124,5 @@ class ICMPType(ByteIntStrData):
                 11: "Time Exceeded", 12:"Parameter Problem",
                 13: "Timestamp request", 14:"Timestamp Reply",
                 17:"Address mask request", 18: "Address mask response"}
+
 

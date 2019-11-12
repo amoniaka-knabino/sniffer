@@ -1,7 +1,7 @@
 #import Packet
 from struct import unpack
 import socket
-from Headers import EthernetHeader, IPv4Header, ARPHeader, ICMPHeader, DHCPHeader, UDPHeader, TCPHeader
+from Headers import *
 from helpers import *
 from Packet import Packet
 
@@ -9,9 +9,9 @@ class PacketParser():
 
     def parse(self, raw_data):
         eth_headers, eth_data = self.parse_Ethernet(raw_data)
-        network_header, network_data = self.parse_network_level(eth_data, str(eth_headers.etherType))
+        network_header, network_data = self.parse_network_level(eth_data, str(eth_headers.ether_type))
         trasport_header, transport_data = self.parse_transport_level(network_data, str(network_header.protocol_type))
-        packet = Packet(eth_headers, eth_headers.etherType, network_header, network_header.protocol_type, trasport_header, transport_data)
+        packet = Packet(eth_headers, eth_headers.ether_type, network_header, network_header.protocol_type, trasport_header, transport_data)
         return packet
     
     def parse_transport_level(self, ip_data, protocol_type):

@@ -6,15 +6,16 @@ You need to run this program with super-user rights. (as usual sniffer)
 
 # Requieremnts
 
-python>=3.7
+python>=3.7.4
 
 # Files
 
-ArgParser.py - module for arguments parsing
-Headers.py - network, transport headers classes 
-helpers.py - helping modules
-Packet.py - Captured Packets
+ArgParser.py - module for console arguments parsing
+Headers.py - headers classes 
+helpers.py - small helping classes and functions
+Packet.py - parsed captured Packets class
 PcapMaker.py - pcap file writer 
+PacketParser.py - parse raw sockets to Packet class
 sniffer.py - start point of the program
 
 # Usage

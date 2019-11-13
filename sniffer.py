@@ -4,7 +4,7 @@ import socket
 import sys
 from PacketParser import PacketParser
 from PcapMaker import PcapMaker
-from argparser import ArgParser
+from ArgParser import ArgParser
 
 
 class Sniffer():

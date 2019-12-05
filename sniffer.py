@@ -2,7 +2,7 @@
 
 import socket
 import sys
-from PacketParser import PacketParser
+from PacketParser import parse_all_packet
 from PcapMaker import PcapMaker
 from ArgParser import get_parsed_args
 
@@ -11,7 +11,6 @@ class Sniffer:
     def __init__(self):
         self.packet_size = 65565
         self.sock = self.create_sock()
-        self.parser = PacketParser()
 
     def create_sock(self):
         try:
@@ -19,12 +18,12 @@ class Sniffer:
                               socket.SOCK_RAW, socket.ntohs(0x0003))
             return sock
         except PermissionError:
-            print('try sudo :)')
-            sys.exit()
+            print('try sudo :)', file=sys.stderr)
+            sys.exit(1)
 
     def recieve_pack(self):
         raw_packet = self.sock.recvfrom(self.packet_size)[0]
-        packet = self.parser.parse(raw_packet)
+        packet = parse_all_packet(raw_packet)
         return packet
 
     def recieve_raw(self):
@@ -44,10 +43,7 @@ def main():
     if args.console_mode:
         console_print_mode()
     else:
-        if args.filename is not None:
-            filename = args.filename
-        else:
-            filename = "temp.pcap"
+        filename = args.filename or 'temp.pcap'
         write_pcap_mode_without_filtration(filename)
 
 

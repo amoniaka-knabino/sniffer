@@ -23,7 +23,7 @@ class Header:
         for i in self.FIELDS:
             value = getattr(self, i[1])
             args_dict[i[0]] = value
-        return ', '.join([f'{k} : {v}' for (k, v) in args_dict.items()])
+        return ',  '.join([f'{k} : {v}' for (k, v) in args_dict.items()])
     
     def post_init(self):
         pass

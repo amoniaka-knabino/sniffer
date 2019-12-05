@@ -1,10 +1,24 @@
+#import helpers as h
+
 from helpers import *
 
-
 class Header:
+    # format of FIELDS item: [print_name, var_name, type]
+    # format of args = [item_value, item_value ...]
+
+    # eval(f"{self.FIELDS[i][2]}({args[i]})")
+    FIELDS=[]
+    def __init__(self, *args):
+        for i in range(len(self.FIELDS)):
+            setattr(self, self.FIELDS[i][1],
+                    list(map(self.FIELDS[i][2], [args[i]]))[0])
+
     def __str__(self):
-        d = self.__dict__
-        return ', '.join([f'{k} : {v}' for (k, v) in d.items()])
+        args_dict = {}
+        for i in self.FIELDS:
+            value = getattr(self, i[1])
+            args_dict[i[0]] = value
+        return ', '.join([f'{k} : {v}' for (k,v) in args_dict.items()])
 
 
 class NetworkHeader(Header):
@@ -18,18 +32,9 @@ class TransportHeader(Header):
 
 
 class EthernetHeader(Header):
-    def __init__(self, dest_mac, source_mac, proto):
-        self.destination_MAC_address = MAC_address(dest_mac)
-        self.source_MAC_address = MAC_address(source_mac)
-        self.ether_type = EtherType(proto)
-
-    def __str__(self):
-        args = [self.source_MAC_address.to_string(
-        ), self.destination_MAC_address.to_string(), self.ether_type.string]
-
-        str_template = "Source MAC = {}, Destination MAC = {}, EtherType = {}"
-
-        return str_template.format(*args)
+    FIELDS  = [["Destination MAC", "destination_MAC_address", MAC_address],
+                ["Source MAC", "source_MAC_address", MAC_address],
+                ["EtherType", "ether_type", EtherType]]
 
 
 class IPv4Header(NetworkHeader):

@@ -66,13 +66,7 @@ class IPv4Address:
 class MAC_address:
     def __init__(self, mac_bytes):
         self.bytes = mac_bytes
-        self.string = self.to_string()
-
-    def to_string(self):
-        a = self.bytes
-        b = "%.2x:%.2x:%.2x:%.2x:%.2x:%.2x" % (
-            a[0], a[1], a[2], a[3], a[4], a[5])
-        return b
+        self.string = self.__str__()
 
     def __str__(self):
         a = self.bytes
@@ -92,9 +86,6 @@ class FragmentationFlag:
             self.string = self.int_to_name[self.int]
         except KeyError:
             self.string = "unknown " + str(self.int)
-
-    def to_string(self):
-        return self.string
 
     def __str__(self):
         return self.string

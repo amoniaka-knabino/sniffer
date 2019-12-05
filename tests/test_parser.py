@@ -11,14 +11,14 @@ class TestParserTCP(unittest.TestCase):
         assert str(h.destination_MAC_address) == "00:50:56:e9:04:2e"
         assert str(h.source_MAC_address) == "00:0c:29:84:86:5f"
 
-    def _test_ip_address_parsing(self):
+    def test_ip_address_parsing(self):
         eth_header, eth_data = self.parser.parse_Ethernet(self.raw_data)
         ip_header, data = self.parser.parse_IPv4(eth_data)
         assert str(ip_header.source_address) == "192.168.221.128"
         assert str(ip_header.destination_address) == "122.249.180.9"
 
 
-class _TestParserARP():
+class TestParserARP(unittest.TestCase):
     with open('test_packets/arp_packet', 'rb') as f:
         raw_data = f.read()
     parser = PacketParser()
@@ -41,7 +41,7 @@ class _TestParserARP():
         self.parser.parse(self.raw_data)
 
 
-class _TestICMPParser():
+class TestICMPParser(unittest.TestCase):
     with open('test_packets/icmp_packet', 'rb') as f:
         raw_data = f.read()
     parser = PacketParser()
@@ -55,7 +55,7 @@ class _TestICMPParser():
         assert str(icmp_h.type) == "Echo Request"
 
 
-class _TestUDPParser():
+class TestUDPParser(unittest.TestCase):
     with open('test_packets/udp_packet', 'rb') as f:
         raw_data = f.read()
     parser = PacketParser()

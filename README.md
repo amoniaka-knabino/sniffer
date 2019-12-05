@@ -10,6 +10,8 @@ python>=3.7.4
 
 # Files
 
+tests/ - tests
+tests_packets/ - raw packets captured with other sniffer, used for testing
 ArgParser.py - module for console arguments parsing
 Headers.py - headers classes 
 helpers.py - small helping classes and functions

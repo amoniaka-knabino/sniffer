@@ -1,14 +1,10 @@
 from helpers import *
 
 
-class Header():
+class Header:
     def __str__(self):
         d = self.__dict__
-        return ', '.join([str(k) + ' : ' + str(d[k]) for k in d])
-
-    def string_repr(self):
-        d = self.__dict__
-        return ', '.join([str(k) + ' : ' + str(d[k]) for k in d])
+        return ', '.join([f'{k} : {v}' for (k, v) in d.items()])
 
 
 class NetworkHeader(Header):
@@ -27,7 +23,7 @@ class EthernetHeader(Header):
         self.source_MAC_address = MAC_address(source_mac)
         self.ether_type = EtherType(proto)
 
-    def string_repr(self):
+    def __str__(self):
         args = [self.source_MAC_address.to_string(
         ), self.destination_MAC_address.to_string(), self.ether_type.string]
 
@@ -54,14 +50,14 @@ class IPv4Header(NetworkHeader):
         self.destination_address = IPv4Address(dest_ip)
         self.options_with_pad = opt_pad
 
-    def string_repr(self):
+    def __str__(self):  
         args = [self.version, self.header_length,
                 self.type_of_service, self.total_length,
-                self.identifier, self.flags.to_string(),
+                self.identifier, str(self.flags),
                 self.fragmented_offset, self.ttl,
-                self.protocol_type.to_string(), self.header_checksum,
-                self.source_address.to_string(),
-                self.destination_address.string, self.options_with_pad]
+                str(self.protocol_type), self.header_checksum,
+                str(self.source_address),
+                str(self.destination_address), self.options_with_pad]
 
         str_template = """IP ver = {}, header length = {}, TOS = {},
 total length = {}, id = {} , flags = {} , fragmented offset = {},

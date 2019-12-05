@@ -2,7 +2,7 @@ import socket
 from struct import unpack
 
 
-class ByteIntStrData():
+class ByteIntStrData:
     """
     Neccessary: byteorder in _extract_int == byteorder in keys in int_to_name
     """
@@ -14,9 +14,6 @@ class ByteIntStrData():
 
     def _extract_int(self, type_bytes):
         return int.from_bytes(type_bytes, byteorder='little')
-
-    def to_string(self):
-        return self.string
 
     def __str__(self):
         return self.string
@@ -50,7 +47,7 @@ class TransportProtocol(ByteIntStrData):
         return int_to_name
 
 
-class IPv4Address():
+class IPv4Address:
     def __init__(self, adr_bytes):
         self.bytes = adr_bytes
         self.string = socket.inet_ntoa(adr_bytes)
@@ -66,7 +63,7 @@ class IPv4Address():
         return IPv4Address(socket.inet_aton(ip_str))
 
 
-class MAC_address():
+class MAC_address:
     def __init__(self, mac_bytes):
         self.bytes = mac_bytes
         self.string = self.to_string()
@@ -84,7 +81,7 @@ class MAC_address():
         return b
 
 
-class FragmentationFlag():
+class FragmentationFlag:
     int_to_name = {2: "Don't fragment  ",
                    1: "More fragments", 3: "Fragmentation is prohibited"}
 

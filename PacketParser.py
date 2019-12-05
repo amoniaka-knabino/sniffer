@@ -5,7 +5,7 @@ from helpers import *
 from Packet import Packet
 
 
-class PacketParser():
+class PacketParser:
 
     def parse(self, raw_data):
         eth_headers, eth_data = self.parse_Ethernet(raw_data)

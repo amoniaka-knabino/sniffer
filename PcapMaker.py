@@ -2,7 +2,7 @@ from struct import pack
 from time import time
 
 
-class PcapMaker():
+class PcapMaker:
     """
     http://www.kroosec.com/2012/10/a-look-at-pcap-file-format.html
     https://wiki.wireshark.org/Development/LibpcapFileFormat

@@ -1,6 +1,7 @@
 #import helpers as h
 
-from helpers import *
+import helpers as h
+from struct import unpack
 
 for_post_initialization = lambda x : x
 
@@ -40,9 +41,9 @@ class TransportHeader(Header):
 
 
 class EthernetHeader(Header):
-    FIELDS = [["Destination MAC", "destination_MAC_address", MAC_address],
-              ["Source MAC", "source_MAC_address", MAC_address],
-              ["EtherType", "ether_type", EtherType]]
+    FIELDS = [["Destination MAC", "destination_MAC_address", h.MAC_address],
+              ["Source MAC", "source_MAC_address", h.MAC_address],
+              ["EtherType", "ether_type", h.EtherType]]
 
 
 class IPv4Header(NetworkHeader):
@@ -51,20 +52,20 @@ class IPv4Header(NetworkHeader):
               ["Type of Service", "type_of_service", lambda x: x],
               ["Total Length", "total_length", int],
               ["Identifier", "identifier", lambda x: x],
-              ["Flags", "flags", FragmentationFlag],
+              ["Flags", "flags", h.FragmentationFlag],
               ["Fragmentation offset", "fragmented_offset", int],
               ["TTL", "ttl", int],
-              ["Protocol Type", "protocol_type", lambda x: TransportProtocol(bytes([x]))],
+              ["Protocol Type", "protocol_type", lambda x: h.TransportProtocol(bytes([x]))],
               ["Header Checksum", "header_checksum", int],
-              ["Source IP", "source_address", IPv4Address],
-              ["Destination IP", "destination_address", IPv4Address],
+              ["Source IP", "source_address", h.IPv4Address],
+              ["Destination IP", "destination_address", h.IPv4Address],
               ["Options & Padding", "options_with_pad", lambda x: x]
               ]
 
 
 class ARPHeader(NetworkHeader):
     FIELDS = [
-        ["Hardware Type", "hardware_type", HardwareType],
+        ["Hardware Type", "hardware_type", h.HardwareType],
         ["Protocol Type", "protocol_type", for_post_initialization],
         ["HW address length", "hw_addr_byte_len", lambda x: x],
         ["Protocol address length", "proto_addr_byte_len", lambda x: x],
@@ -86,19 +87,19 @@ class ARPHeader(NetworkHeader):
 
     def _set_proto_type(self, proto_type_bytes):
         if str(self.hardware_type) == "Ethernet":
-            return EtherType(proto_type_bytes)
+            return h.EtherType(proto_type_bytes)
         else:
-            return ByteIntStrData(proto_type_bytes)
+            return h.ByteIntStrData(proto_type_bytes)
 
     def _set_hw_addr(self, addr_bytes):
         if str(self.hardware_type) == "Ethernet":
-            return MAC_address(addr_bytes)
+            return h.MAC_address(addr_bytes)
         else:
             return addr_bytes
 
     def _set_proto_addr(self, proto_addr_bytes):
         if str(self.protocol_type) == "IPv4":
-            return IPv4Address(proto_addr_bytes)
+            return h.IPv4Address(proto_addr_bytes)
         else:
             return proto_addr_bytes
 
@@ -108,9 +109,9 @@ class ICMPHeader(TransportHeader):
     https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol
     """
 
-    FIELDS = [["Type", "type", lambda x: ICMPType(bytes([x]))],
-            ["Code", "code", int],
-            ["Checksum", "checksum", int]
+    FIELDS = [["Type", "type", h.ICMPType],
+            ["Code", "code", lambda x : int.from_bytes(x, "big")],
+            ["Checksum", "checksum", lambda x : int.from_bytes(x, "big")]
     ]
 
 

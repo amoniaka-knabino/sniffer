@@ -2,7 +2,7 @@
 
 import socket
 import sys
-from PacketParser import parse_all_packet
+from PacketParser import parse_raw_packet
 from PcapMaker import PcapMaker
 from ArgParser import get_parsed_args
 
@@ -23,7 +23,7 @@ class Sniffer:
 
     def recieve_pack(self):
         raw_packet = self.sock.recvfrom(self.packet_size)[0]
-        packet = parse_all_packet(raw_packet)
+        packet = parse_raw_packet(raw_packet, "Ethernet")
         return packet
 
     def recieve_raw(self):

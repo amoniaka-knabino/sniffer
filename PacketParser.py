@@ -4,38 +4,26 @@ from Headers import *
 from helpers import *
 from Packet import Packet
 
+PLUGINS = dict()
 
+def register(func):
+    """Register a function as a plug-in"""
+    PLUGINS[func.__name__] = func
+    return func
 
-
-def parse_all_packet( raw_data):
-    eth_headers, eth_data = parse_Ethernet(raw_data)
-    network_header, network_data = parse_network_level(
-        eth_data, str(eth_headers.ether_type))
-    trasport_header, transport_data = parse_transport_level(
-        network_data, str(network_header.protocol_type))
-    packet = Packet(eth_headers, eth_headers.ether_type,
-                    network_header, network_header.protocol_type,
-                    trasport_header, transport_data)
-    return packet
-
-def parse_transport_level( ip_data, protocol_type):
-    if protocol_type == "ICMP":
-        return parse_icmp(ip_data)
-    elif protocol_type == "UDP":
-        return parse_udp(ip_data)
-    elif protocol_type == "TCP":
-        return parse_tcp(ip_data)
+def parse_raw_packet(raw_data, protocol_type):  
+    pack = PLUGINS[f"parse_{protocol_type}"](raw_data)
+    if type(pack.header) is IPv4Header:
+        proto = str(pack.header.protocol_type)
+    elif type(pack.header) is EthernetHeader:
+        proto = str(pack.header.ether_type)
     else:
-        return None, ip_data
+        proto = "unknown"
+        return pack
+    return Packet(pack.header, parse_raw_packet(pack.data, proto))
 
-def parse_network_level( eth_data, eth_type):
-    if eth_type == "IPv4":
-        return parse_IPv4(eth_data)
-    elif eth_type == "ARP":
-        return parse_ARP(eth_data)
-    else:
-        return None, eth_data
 
+@register
 def parse_Ethernet( raw_data):
     eth_length = 14
 
@@ -46,8 +34,10 @@ def parse_Ethernet( raw_data):
     proto = eth_header[-2:]
 
     headers = EthernetHeader(destination_mac, source_mac, proto)
-    return headers, raw_data[eth_length:]
+    #print(type(headers) is EthernetHeader)
+    return Packet(headers, raw_data[eth_length:])
 
+@register
 def parse_IPv4( eth_data):
 
     iph = unpack('!BBHHHBBH4s4s', eth_data[0:20])
@@ -83,9 +73,10 @@ def parse_IPv4( eth_data):
     header = IPv4Header(version, iph_length, type_of_service,
                         total_len, datagram_id, flags, fr_offset,
                         ttl, protocol, h_checksum, s_addr, d_addr, opt)
+    #print(isinstance(header, NetworkHeader) )
+    return Packet(header, eth_data[header.header_length:])
 
-    return header, eth_data[header.header_length:]
-
+@register
 def parse_ARP( eth_data):
     first_part = unpack("!HHBBH", eth_data[:8])
     hw_type = int.to_bytes(first_part[0], byteorder='big', length=2)
@@ -110,9 +101,10 @@ def parse_ARP( eth_data):
     header = ARPHeader(hw_type, proto_type, hw_adr_size, proto_addr_size,
                         opt, hw_sender, proto_sender,
                         hw_target, proto_target)
-    return header, b""
+    return Packet(header, b"")
 
-def parse_tcp( raw_data):
+@register
+def parse_TCP( raw_data):
     """
     https://www.techrepublic.com/article/exploring-the-anatomy-of-a-data-packet/
     https://en.wikipedia.org/wiki/Transmission_Control_Protocol
@@ -135,20 +127,26 @@ def parse_tcp( raw_data):
 
     opt = raw_data[20:tcph_len]
 
-    return TCPHeader(s_port, d_port, seq_num, ack_num,
+    return Packet(TCPHeader(s_port, d_port, seq_num, ack_num,
                         data_offset, flags, window_size,
-                        check_sum, urgent_pointer, opt), raw_data[tcph_len:]
+                        check_sum, urgent_pointer, opt), raw_data[tcph_len:])
 
-def parse_udp( raw_data):
+@register
+def parse_UDP( raw_data):
     s_port = raw_data[:2]
     d_port = raw_data[2:4]
     length = raw_data[4:6]
     checksum = raw_data[6:8]
-    return UDPHeader(s_port, d_port, length, checksum), raw_data[8:]
+    return Packet(UDPHeader(s_port, d_port, length, checksum), raw_data[8:])
 
-def parse_icmp( raw_data):
+@register
+def parse_ICMP( raw_data):
     header = unpack("BBH", raw_data[:4])
     icmp_type = header[0]
     code = header[1]
     checksum = header[2]
-    return ICMPHeader(icmp_type, code, checksum), raw_data[4:]
+    return Packet(ICMPHeader(icmp_type, code, checksum), raw_data[4:])
+
+@register
+def parse_unknown(raw_data):
+    return Packet(None, raw_data)

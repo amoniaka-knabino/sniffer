@@ -30,7 +30,6 @@ def parse_Ethernet(raw_data):
     destination_mac, source_mac, proto = divide_packet([6, 6, 2], raw_data)
 
     headers = Headers.EthernetHeader(destination_mac, source_mac, proto)
-    #print(type(headers) is EthernetHeader)
     return Packet(headers, raw_data[eth_length:])
 
 
@@ -40,7 +39,6 @@ def parse_IPv4(eth_data):
     iph = unpack('!BBHHHBBH4s4s', eth_data[0:20])
 
     version_ihl = iph[0]
-    # version_ihl_byte = [ver(4 bits), ihl(4 bits)]
     version = version_ihl >> 4
     ihl = version_ihl & 0xF
 
@@ -70,7 +68,6 @@ def parse_IPv4(eth_data):
     header = Headers.IPv4Header(version, iph_length, type_of_service,
                                 total_len, datagram_id, flags, fr_offset,
                                 ttl, protocol, h_checksum, s_addr, d_addr, opt)
-    #print(isinstance(header, NetworkHeader) )
     return Packet(header, eth_data[header.header_length:])
 
 
@@ -89,7 +86,8 @@ def parse_ARP(eth_data):
     hw_target, proto_target = divide_packet(
         [hw_adr_size, proto_addr_size], eth_data, 8+addrs_size)
 
-    header = Headers.ARPHeader(hw_type, proto_type, hw_adr_size, proto_addr_size,
+    header = Headers.ARPHeader(hw_type, proto_type, hw_adr_size,
+                               proto_addr_size,
                                opt, hw_sender, proto_sender,
                                hw_target, proto_target)
     return Packet(header, b"")
@@ -125,7 +123,8 @@ def parse_TCP(raw_data):
 @register
 def parse_UDP(raw_data):
     s_port, d_port, length, checksum = divide_packet([2, 2, 2, 2], raw_data)
-    return Packet(Headers.UDPHeader(s_port, d_port, length, checksum), raw_data[8:])
+    return Packet(Headers.UDPHeader(s_port, d_port, length, checksum),
+                  raw_data[8:])
 
 
 @register

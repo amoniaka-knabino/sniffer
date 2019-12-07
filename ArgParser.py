@@ -15,5 +15,3 @@ def get_parsed_args():
     parser.add_argument('--ip', dest='ip', help="TODO")
     parser.add_argument('--port', dest='port', help="TODO")
     return parser.parse_args()
-
-        

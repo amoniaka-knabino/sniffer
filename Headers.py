@@ -1,16 +1,15 @@
-#import helpers as h
-
 import helpers as h
 from struct import unpack
 
-for_post_initialization = lambda x : x
+
+def for_post_init(x): return x
+
 
 class Header:
     """
     format of FIELDS item: [print_name, var_name, func for map]
     format of args = [item_value, item_value ...]
     """
-    # eval(f"{self.FIELDS[i][2]}({args[i]})")
     FIELDS = []
 
     def __init__(self, *args):
@@ -25,7 +24,7 @@ class Header:
             value = getattr(self, i[1])
             args_dict[i[0]] = value
         return ',  '.join([f'{k} : {v}' for (k, v) in args_dict.items()])
-    
+
     def post_init(self):
         pass
 
@@ -55,7 +54,8 @@ class IPv4Header(NetworkHeader):
               ["Flags", "flags", h.FragmentationFlag],
               ["Fragmentation offset", "fragmented_offset", int],
               ["TTL", "ttl", int],
-              ["Protocol Type", "protocol_type", lambda x: h.TransportProtocol(bytes([x]))],
+              ["Protocol Type", "protocol_type",
+                  lambda x: h.TransportProtocol(bytes([x]))],
               ["Header Checksum", "header_checksum", int],
               ["Source IP", "source_address", h.IPv4Address],
               ["Destination IP", "destination_address", h.IPv4Address],
@@ -66,15 +66,15 @@ class IPv4Header(NetworkHeader):
 class ARPHeader(NetworkHeader):
     FIELDS = [
         ["Hardware Type", "hardware_type", h.HardwareType],
-        ["Protocol Type", "protocol_type", for_post_initialization],
+        ["Protocol Type", "protocol_type", for_post_init],
         ["HW address length", "hw_addr_byte_len", lambda x: x],
         ["Protocol address length", "proto_addr_byte_len", lambda x: x],
         ["Operation Code", "operation_code", lambda x: x],
-        ["Hardware Address Sender", "hw_addr_sender", for_post_initialization],
-        ["Protocol Address Sender", "proto_addr_sender", for_post_initialization],
-        ["Hardware Address Target", "hw_addr_target", for_post_initialization],
-        ["Protocol Address Target", "proto_addr_target", for_post_initialization]
-        
+        ["Hardware Address Sender", "hw_addr_sender", for_post_init],
+        ["Protocol Address Sender", "proto_addr_sender", for_post_init],
+        ["Hardware Address Target", "hw_addr_target", for_post_init],
+        ["Protocol Address Target", "proto_addr_target", for_post_init]
+
     ]
 
     def post_init(self):
@@ -83,7 +83,6 @@ class ARPHeader(NetworkHeader):
         self.proto_addr_sender = self._set_proto_addr(self.proto_addr_sender)
         self.hw_addr_target = self._set_hw_addr(self.hw_addr_target)
         self.proto_addr_target = self._set_proto_addr(self.proto_addr_target)
-
 
     def _set_proto_type(self, proto_type_bytes):
         if str(self.hardware_type) == "Ethernet":
@@ -110,27 +109,31 @@ class ICMPHeader(TransportHeader):
     """
 
     FIELDS = [["Type", "type", h.ICMPType],
-            ["Code", "code", lambda x : int.from_bytes(x, "big")],
-            ["Checksum", "checksum", lambda x : int.from_bytes(x, "big")]
-    ]
+              ["Code", "code", lambda x: int.from_bytes(x, "big")],
+              ["Checksum", "checksum", lambda x: int.from_bytes(x, "big")]
+              ]
 
 
 class TCPHeader(TransportHeader):
-    FIELDS = [["Source Port", "source_port", lambda x : unpack("!H", x)[0]],
-                ["Destination Port", 'destination_port', lambda x : unpack("!H", x)[0]],
-                ["Sequence number", "sequence_number", lambda x : unpack("!L", x)[0]],
-                ["Acknowledgement number", "acknowledgement_number", lambda x : unpack("!L", x)[0]],
-                ["Offset", "offset", lambda x: x],
-                ["Flags", "flags", lambda x: x],
-                ["Window", "window", lambda x: x],
-                ["Checksum", 'checksum', lambda x : unpack("!H", x)[0]],
-                ["Urgent Pointer", "urgent_pointer", lambda x: x],
-                ["Options", "options", lambda x: x]
-    ]
+    FIELDS = [["Source Port", "source_port", lambda x: unpack("!H", x)[0]],
+              ["Destination Port", 'destination_port',
+                  lambda x: unpack("!H", x)[0]],
+              ["Sequence number", "sequence_number",
+                  lambda x: unpack("!L", x)[0]],
+              ["Acknowledgement number", "acknowledgement_number",
+                  lambda x: unpack("!L", x)[0]],
+              ["Offset", "offset", lambda x: x],
+              ["Flags", "flags", lambda x: x],
+              ["Window", "window", lambda x: x],
+              ["Checksum", 'checksum', lambda x: unpack("!H", x)[0]],
+              ["Urgent Pointer", "urgent_pointer", lambda x: x],
+              ["Options", "options", lambda x: x]
+              ]
+
 
 class UDPHeader(TransportHeader):
-    FIELDS = [["Source Port", "source_port", lambda x : unpack("!H", x)[0]],
-                ["Destination Port", 'destination_port', lambda x : unpack("!H", x)[0]],
-                ["Length", "length", lambda x : unpack("!H", x)[0]],
-                ["Checksum", "checksum", lambda x : x]]
-
+    FIELDS = [["Source Port", "source_port", lambda x: unpack("!H", x)[0]],
+              ["Destination Port", 'destination_port',
+                  lambda x: unpack("!H", x)[0]],
+              ["Length", "length", lambda x: unpack("!H", x)[0]],
+              ["Checksum", "checksum", lambda x: x]]

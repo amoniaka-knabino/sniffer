@@ -45,7 +45,7 @@ def sniff(args):
     if args.console_mode:
         console_print_mode(sniffer)
     else:
-        filename = args.filename or 'temp.pcap'
+        filename = args.filename
         write_pcap_mode_without_filtration(sniffer, filename)
 
 def main():

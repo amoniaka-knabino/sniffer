@@ -7,7 +7,7 @@ def get_parsed_args():
                         help='name of interface to capture traffic',
                         default='', dest='interface')
     parser.add_argument('-f', '--file', dest='filename',
-                        help="output pcap filename. default: temp.pcap")
+                        help="output pcap filename (write in tmp file by default)")
     parser.add_argument('-c', '--console', dest='console_mode',
                         action='store_true',
                         help="console print mode (without pcap)")

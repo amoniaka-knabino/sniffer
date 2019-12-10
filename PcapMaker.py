@@ -2,7 +2,8 @@ from struct import pack
 from time import time
 import random
 import string
-from os.path import exists, basename, splitext
+from os.path import exists, basename, splitext, abspath
+from tempfile import NamedTemporaryFile
 
 class PcapMaker:
     """
@@ -11,8 +12,12 @@ class PcapMaker:
     """
 
     def __init__(self, filename='', options={}, timezone=5):
-        self.filename = self.choose_filename(filename)
-        self.file = self.create_pcap_file()
+        if filename:
+            self.filename = self.choose_filename(filename)
+            self.file = self.create_pcap_file()
+        else:
+            self.file = self.create_pcap_tempfile()
+            self.filename = abspath(self.file.name)
         self.thiszone = 5*3600
         self.snaplen = 65535
 
@@ -22,9 +27,10 @@ class PcapMaker:
         return open(self.filename, 'wb+')
     
     def create_pcap_tempfile(self):
-        pass
+        return NamedTemporaryFile(mode="wb", delete=False)
 
     def initialize_pcap_file(self):
+        print(f"your pcap: {self.filename}")
         self.write_global_header()
 
     def write_global_header(self):
@@ -46,14 +52,12 @@ class PcapMaker:
         while True:
             if exists(filename):
                 base = splitext(basename(filename))
-                print(base)
                 new_filename = ''
                 for i in range(len(base)-1):
                     new_filename += base[i]
                 new_filename += f"_{gen_rand_str()}{base[-1]}"
                 filename = new_filename
             else:
-                print(f"your pcap: {filename}")
                 return filename
         
 

@@ -53,7 +53,7 @@ class PcapMaker:
                 new_filename += f"_{gen_rand_str()}{base[-1]}"
                 filename = new_filename
             else:
-                print(filename)
+                print(f"your pcap: {filename}")
                 return filename
         
 

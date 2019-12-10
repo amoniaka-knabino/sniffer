@@ -16,8 +16,11 @@ class Sniffer:
         try:
             sock = socket.socket(socket.AF_PACKET,
                                  socket.SOCK_RAW, socket.ntohs(0x0003))
-            if interface != '':
-                sock.bind((interface, 0))
+            try:
+                if interface != '':
+                    sock.bind((interface, 0))
+            except OSError:
+                raise OSError("no such device :(")
             return sock
         except PermissionError:
             raise PermissionError('try sudo :)')

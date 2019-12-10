@@ -3,11 +3,18 @@ import argparse
 
 def get_parsed_args():
     parser = argparse.ArgumentParser(description="sniff your traffic <3")
+    parser.add_argument('-i', '--interface',
+                        help='name of interface to capture traffic',
+                        default='', dest='interface')
     parser.add_argument('-f', '--file', dest='filename',
                         help="output pcap filename. default: temp.pcap")
     parser.add_argument('-c', '--console', dest='console_mode',
                         action='store_true',
                         help="console print mode (without pcap)")
+    parser.add_argument('-d', '--debug',
+                        help='mode with printing exception details',
+                        action='store_true',
+                        dest='debug')
     parser.add_argument('--network_proto',
                         dest='network_proto', help="TODO")
     parser.add_argument('--trasport_proto',

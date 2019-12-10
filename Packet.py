@@ -7,5 +7,5 @@ class Packet:
         if self.header is None:
             return str(self.data)
         return (
-                f"{self.header}\n"
-                f"{self.data}\n")
+            f"{self.header}\n"
+            f"{self.data}\n")

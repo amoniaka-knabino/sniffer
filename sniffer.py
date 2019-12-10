@@ -8,18 +8,19 @@ from ArgParser import get_parsed_args
 
 
 class Sniffer:
-    def __init__(self):
+    def __init__(self, interface):
         self.packet_size = 65565
-        self.sock = self.create_sock()
+        self.sock = self.create_sock(interface)
 
-    def create_sock(self):
+    def create_sock(self, interface):
         try:
             sock = socket.socket(socket.AF_PACKET,
-                              socket.SOCK_RAW, socket.ntohs(0x0003))
+                                 socket.SOCK_RAW, socket.ntohs(0x0003))
+            if interface != '':
+                sock.bind((interface, 0))
             return sock
         except PermissionError:
-            print('try sudo :)', file=sys.stderr)
-            sys.exit(1)
+            raise PermissionError('try sudo :)')
 
     def recieve_pack(self):
         raw_packet = self.sock.recvfrom(self.packet_size)[0]
@@ -30,32 +31,40 @@ class Sniffer:
         return self.sock.recvfrom(self.packet_size)[0]
 
 
-def write_pcap_mode_without_filtration(filename):
-    sniffer = Sniffer()
+def write_pcap_mode_without_filtration(sniffer, filename):
     pcap_maker = PcapMaker(filename=filename)
     while True:
         pack = sniffer.recieve_raw()
         pcap_maker.write_packet(pack)
 
+def sniff(args):
+    sniffer = Sniffer(args.interface)
+    if args.console_mode:
+        console_print_mode(sniffer)
+    else:
+        filename = args.filename or 'temp.pcap'
+        write_pcap_mode_without_filtration(sniffer, filename)
 
 def main():
     args = get_parsed_args()
-    if args.console_mode:
-        console_print_mode()
+    if args.debug:
+        sniff(args)
     else:
-        filename = args.filename or 'temp.pcap'
-        write_pcap_mode_without_filtration(filename)
+        try:
+            sniff(args)
+        except Exception as e:
+            print(f"{e}", file=sys.stderr)
+        except KeyboardInterrupt:
+            print("Keyboard Interrupt", file=sys.stderr)
 
 
-def console_print_mode():
-    sniffer = Sniffer()
+def console_print_mode(sniffer):
     while True:
         packet = sniffer.recieve_pack()
-        print(str(packet)+ '\n\n\n')
+        print(str(packet) + '\n')
 
 
-def write_pcap_mode():
-    sniffer = Sniffer()
+def write_pcap_mode(sniffer):
     pcap_maker = PcapMaker()
     while True:
         packet = sniffer.recieve_pack()

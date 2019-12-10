@@ -64,7 +64,7 @@ def main():
 def console_print_mode(sniffer):
     while True:
         packet = sniffer.recieve_pack()
-        print(str(packet) + '\n')
+        print(str(packet) + '\n\n')
 
 
 def write_pcap_mode(sniffer):

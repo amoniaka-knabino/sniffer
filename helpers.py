@@ -1,11 +1,13 @@
 import socket
 from struct import unpack
 
+
 def exchange_key_and_values(dic):
     rev_dic = {}
     for key in dic:
         rev_dic[dic[key]] = key
     return rev_dic
+
 
 class ByteIntStrData:
     """
@@ -41,8 +43,8 @@ class HardwareType(ByteIntStrData):
 
 class EtherType(ByteIntStrData):
     int_to_name = {8: "IPv4", 0x0608: "ARP", 0xDD86: "IPv6",
-                    0x4788: "MPLS unicast", 0x4888: "MPLS multicast",
-                    0x8E88: "EAPoL"}
+                   0x4788: "MPLS unicast", 0x4888: "MPLS multicast",
+                   0x8E88: "EAPoL"}
 
 
 class TransportProtocol(ByteIntStrData):
@@ -97,19 +99,18 @@ class ARPOpCode(ByteIntStrData):
     """
     http://www.networksorcery.com/enp/protocol/arp.htm#Opcode
     """
-    int_to_name =  {0: "reserved", 1: "request", 2: "reply",
-                    3: "request reverse", 4: "reply reverse",
-                    5: "DRARP request", 6: "DRARP peply", 7: "DRARP Error",
-                    8: "InARP Request", 9: "InARP Reply", 10: "ARP NAK"}
+    int_to_name = {0: "reserved", 1: "request", 2: "reply",
+                   3: "request reverse", 4: "reply reverse",
+                   5: "DRARP request", 6: "DRARP peply", 7: "DRARP Error",
+                   8: "InARP Request", 9: "InARP Reply", 10: "ARP NAK"}
 
 
 class ICMPType(ByteIntStrData):
     """
     http://www.rhyshaden.com/icmp.htm
     """
-    int_to_name =  {0: "Echo Reply", 3: "Destination Unreachable",
-                4: "Source Queench", 5: "Redirect", 8: "Echo Request",
-                11: "Time Exceeded", 12: "Parameter Problem",
-                13: "Timestamp request", 14: "Timestamp Reply",
-                17: "Address mask request", 18: "Address mask response"}
-
+    int_to_name = {0: "Echo Reply", 3: "Destination Unreachable",
+                   4: "Source Queench", 5: "Redirect", 8: "Echo Request",
+                   11: "Time Exceeded", 12: "Parameter Problem",
+                   13: "Timestamp request", 14: "Timestamp Reply",
+                   17: "Address mask request", 18: "Address mask response"}

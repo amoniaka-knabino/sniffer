@@ -1,3 +1,8 @@
+from hexdump import hexdump
+import sys
+import io
+from contextlib import redirect_stdout
+
 class Packet:
     def __init__(self, header, data):
         self.header = header
@@ -5,7 +10,20 @@ class Packet:
 
     def __str__(self):
         if self.header is None:
-            return str(self.data)
-        return (
-            f"{self.header}\n"
-            f"{self.data}\n")
+
+            return get_hex_dump(self.data)
+        else:
+            if isinstance(self.data, Packet):
+                return (f"{self.header}\n\n"
+                        f"{self.data}")
+            else:
+                return get_hex_dump(self.data)
+
+def get_hex_dump(data):
+    #old_stdout = sys.stdout
+    with io.StringIO() as buf, redirect_stdout(buf):
+        #print('redirected')
+        hexdump(data)
+        output = buf.getvalue()
+    #sys.stdout = old_stdout
+    return output

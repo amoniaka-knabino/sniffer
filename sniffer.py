@@ -5,6 +5,7 @@ import sys
 from PacketParser import parse_raw_packet
 from PcapMaker import PcapMaker
 from ArgParser import get_parsed_args
+import pack_filter
 
 
 class Sniffer:
@@ -50,7 +51,9 @@ def sniff(args):
 
 def main():
     args = get_parsed_args()
-    if args.debug:
+    if args.show_filter_list:
+        pack_filter.show_help()
+    elif args.debug:
         sniff(args)
     else:
         try:

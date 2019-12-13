@@ -3,10 +3,7 @@ from struct import unpack
 
 
 def exchange_key_and_values(dic):
-    rev_dic = {}
-    for key in dic:
-        rev_dic[dic[key]] = key
-    return rev_dic
+    return {v: k for (k, v) in dic.items()}
 
 
 class ByteIntStrData:
@@ -70,7 +67,7 @@ class IPv4Address:
 class MAC_address:
     def __init__(self, mac_bytes):
         self.bytes = mac_bytes
-        self.string = self.__str__()
+        self.string = str(self)
 
     def __str__(self):
         a = self.bytes

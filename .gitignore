@@ -1,4 +1,5 @@
 useful_data/
+.vscode/
 __pycache__
 debug.py
 *.pyc

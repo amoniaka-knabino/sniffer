@@ -15,10 +15,9 @@ def get_parsed_args():
                         help='mode with printing exception details',
                         action='store_true',
                         dest='debug')
-    parser.add_argument('--network_proto',
+    parser.add_argument('--filter', nargs='+',
                         dest='network_proto', help="TODO")
-    parser.add_argument('--trasport_proto',
-                        dest='trasport_proto', help="TODO")
-    parser.add_argument('--ip', dest='ip', help="TODO")
-    parser.add_argument('--port', dest='port', help="TODO")
+    parser.add_argument('-l', '--filter-list', action='store_true',
+                        dest='show_filter_list',
+                        help="list of possible filters and istruction")
     return parser.parse_args()

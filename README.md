@@ -23,8 +23,10 @@ sniffer.py - start point of the program
 # Usage
 
 ./sniffer.py --help
-./sniffer.py - sniff traffic and write it to "temp.pcap"
-./sniffer.py -c - console writing mode (debug)
+./sniffer.py - sniff traffic and write it to tempfile
+./sniffer.py -d - run sniffer in debug mode (when you get exception, you'll see stack trace)
+./sniffer.py -c - console writing mode
+./sniffer.py -i eth0 - sniff traffic from eth0 interface
 ./sniffer.py -f my.pcap - sniff traffic and write it to "my.pcap"
 
 # Details of realization

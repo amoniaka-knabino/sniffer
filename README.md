@@ -19,6 +19,7 @@ Packet.py - parsed captured Packets class
 PcapMaker.py - pcap file writer 
 PacketParser.py - parse raw sockets to Packet class
 sniffer.py - start point of the program
+pack_filter.py - filter for parsed packets (now is only 1 arg simple filter)
 
 # Usage
 
@@ -28,7 +29,11 @@ sniffer.py - start point of the program
 ./sniffer.py -c - console writing mode
 ./sniffer.py -i eth0 - sniff traffic from eth0 interface
 ./sniffer.py -f my.pcap - sniff traffic and write it to "my.pcap"
+./sniffer.py -c --filter EthernetHeader.ether_type==ARP - sniff and print only ARP packs
+./sniffer.py -l - look details about filtering
 
 # Details of realization
 
 Sniffer based on raw sockets.
+
+Now is simple filtration supported (ONLY IN CONSOLE MODE). See details: ./sniffer.py -l

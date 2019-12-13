@@ -6,4 +6,3 @@ debug.py
 *.pcap
 .coverage
 tmp
-filter.py

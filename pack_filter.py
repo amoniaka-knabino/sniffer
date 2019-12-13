@@ -22,7 +22,7 @@ class OneArgumentSimpleFilter:
             res = self.filter_one_level(current_pack)
             if res:
                 return True
-            if current_pack.data is Packet:
+            elif type(current_pack.data) is Packet:
                 current_pack = current_pack.data 
             else:
                 return False

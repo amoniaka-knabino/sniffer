@@ -42,10 +42,10 @@ def parse_IPv4(eth_data):
     version = version_ihl >> 4
     ihl = version_ihl & 0xF
 
-    iph_length = ihl * 4  # ???
+    iph_length = ihl * 4
 
     type_of_service = iph[1]
-    total_len = iph[2]  # should I change byteorder
+    total_len = iph[2]
     datagram_id = iph[3]
 
     flags_fr_offset = iph[4]

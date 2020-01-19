@@ -67,7 +67,6 @@ class PcapMaker:
 
     def write_packet_header(self, packet):
         ts_sec = pack("i", int(time()))
-        # how many microsec was taken to capture the packet
         ts_usec = pack("i", 0)
         incl_len = pack("i", len(packet) % self.snaplen)
         orig_len = pack("i", len(packet))
